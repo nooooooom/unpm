@@ -1,13 +1,9 @@
 import { expect, test } from 'vitest'
-import { parseNa } from '../../src/commands'
+import { parseNa } from '../../src'
 
 const agent = 'bun'
 const _ = (arg: string, expected: string) => () => {
-  expect(
-    parseNa(agent, arg.split(' ').filter(Boolean)),
-  ).toBe(
-    expected,
-  )
+  expect(parseNa(agent, arg.split(' ').filter(Boolean))).toBe(expected)
 }
 
 test('empty', _('', 'bun'))

@@ -1,28 +1,32 @@
+import { Agent, Agents } from './commands'
 import fs from 'fs'
 import path from 'path'
-import { execaCommand } from 'execa'
 import { findUp } from 'find-up'
-import terminalLink from 'terminal-link'
-import prompts from 'prompts'
-import type { Agent } from './agents'
-import { AGENTS, INSTALL_PAGE, LOCKS } from './agents'
-import { cmdExists } from './utils'
+
+// the order here matters, more specific one comes first
+export const Locks: Record<string, Agent> = {
+  'bun.lockb': 'bun',
+  'pnpm-lock.yaml': 'pnpm',
+  'yarn.lock': 'yarn',
+  'package-lock.json': 'npm',
+  'npm-shrinkwrap.json': 'npm'
+}
 
 export interface DetectOptions {
-  autoInstall?: boolean
   cwd?: string
 }
 
-export async function detect({ autoInstall, cwd }: DetectOptions = {}) {
+export async function detect({ cwd }: DetectOptions = {}) {
   let agent: Agent | null = null
 
-  const lockPath = await findUp(Object.keys(LOCKS), { cwd })
+  const lockPath = await findUp(Object.keys(Locks), { cwd })
   let packageJsonPath: string | undefined
 
-  if (lockPath)
+  if (lockPath) {
     packageJsonPath = path.resolve(lockPath, '../package.json')
-  else
+  } else {
     packageJsonPath = await findUp('package.json', { cwd })
+  }
 
   // read `packageManager` field in package.json
   if (packageJsonPath && fs.existsSync(packageJsonPath)) {
@@ -30,43 +34,32 @@ export async function detect({ autoInstall, cwd }: DetectOptions = {}) {
       const pkg = JSON.parse(fs.readFileSync(packageJsonPath, 'utf8'))
       if (typeof pkg.packageManager === 'string') {
         const [name, version] = pkg.packageManager.split('@')
-        if (name === 'yarn' && parseInt(version) > 1)
+        if (name === 'yarn' && parseInt(version) > 1) {
           agent = 'yarn@berry'
-        else if (name === 'pnpm' && parseInt(version) < 7)
+        } else if (name === 'pnpm' && parseInt(version) < 7) {
           agent = 'pnpm@6'
-        else if (name in AGENTS)
+        } else if (name in Agents) {
           agent = name
-        else
-          console.warn('[ni] Unknown packageManager:', pkg.packageManager)
+        } else {
+          console.warn('[unpm] Unknown packageManager:', pkg.packageManager)
+        }
       }
-    }
-    catch {}
+    } catch {}
   }
 
   // detect based on lock
-  if (!agent && lockPath)
-    agent = LOCKS[path.basename(lockPath)]
-
-  // auto install
-  if (agent && !cmdExists(agent.split('@')[0])) {
-    if (!autoInstall) {
-      console.warn(`[ni] Detected ${agent} but it doesn't seem to be installed.\n`)
-
-      if (process.env.CI)
-        process.exit(1)
-
-      const link = terminalLink(agent, INSTALL_PAGE[agent])
-      const { tryInstall } = await prompts({
-        name: 'tryInstall',
-        type: 'confirm',
-        message: `Would you like to globally install ${link}?`,
-      })
-      if (!tryInstall)
-        process.exit(1)
-    }
-
-    await execaCommand(`npm i -g ${agent}`, { stdio: 'inherit', cwd })
+  if (!agent && lockPath) {
+    agent = Locks[path.basename(lockPath)]
   }
 
   return agent
+}
+
+export const InstallPages: Record<Agent, string> = {
+  bun: 'https://bun.sh',
+  pnpm: 'https://pnpm.io/installation',
+  'pnpm@6': 'https://pnpm.io/6.x/installation',
+  yarn: 'https://classic.yarnpkg.com/en/docs/install',
+  'yarn@berry': 'https://yarnpkg.com/getting-started/install',
+  npm: 'https://docs.npmjs.com/cli/v8/configuring-npm/install'
 }

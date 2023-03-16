@@ -1,5 +1,5 @@
 import { expect, test } from 'vitest'
-import { parseNu } from '../../src/commands'
+import { parseNu } from '../../src'
 
 const agent = 'bun'
 const _ = (arg: string, expected: string | null) => () => {

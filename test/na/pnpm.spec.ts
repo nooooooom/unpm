@@ -1,5 +1,5 @@
 import { expect, test } from 'vitest'
-import { parseNa } from '../../src/commands'
+import { parseNa } from '../../src'
 
 const agent = 'pnpm'
 const _ = (arg: string, expected: string) => () => {

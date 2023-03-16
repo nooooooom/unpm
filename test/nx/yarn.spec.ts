@@ -1,13 +1,9 @@
 import { expect, test } from 'vitest'
-import { parseNx } from '../../src/commands'
+import { parseNix } from '../../src'
 
 const agent = 'yarn'
 const _ = (arg: string, expected: string) => () => {
-  expect(
-    parseNx(agent, arg.split(' ').filter(Boolean)),
-  ).toBe(
-    expected,
-  )
+  expect(parseNix(agent, arg.split(' ').filter(Boolean))).toBe(expected)
 }
 
 test('single uninstall', _('esbuild', 'npx esbuild'))

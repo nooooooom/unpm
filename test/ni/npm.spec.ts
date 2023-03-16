@@ -1,5 +1,5 @@
 import { expect, test } from 'vitest'
-import { parseNi } from '../../src/commands'
+import { parseNi } from '../../src'
 
 const agent = 'npm'
 const _ = (arg: string, expected: string) => () => {

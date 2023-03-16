@@ -1,5 +1,5 @@
 import { expect, test } from 'vitest'
-import { parseNr } from '../../src/commands'
+import { parseNr } from '../../src'
 
 const agent = 'npm'
 const _ = (arg: string, expected: string) => () => {
