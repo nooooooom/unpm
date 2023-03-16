@@ -13,14 +13,14 @@
   "bugs": {
     "url": "https://github.com/nooooooom/unpm/issues"
   },
-  "main": "dist/index.cjs",
+  "main": "dist/index.js",
   "module": "dist/index.mjs",
   "types": "dist/index.d.ts",
   "files": [
     "dist"
   ],
   "scripts": {
-    "build": "unbuild",
+    "build": "tsup",
     "test": "vitest",
     "prepublishOnly": "npm run build",
     "release": "bumpp && npm publish"
@@ -34,5 +34,8 @@
     "typescript": "^4.9.4",
     "unbuild": "^1.1.1",
     "vitest": "^0.27.2"
+  },
+  "dependencies": {
+    "tsup": "^6.6.3"
   }
 }
