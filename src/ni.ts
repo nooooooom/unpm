@@ -1,6 +1,6 @@
 import { Agent, resolveCommandStatement } from './commands'
 
-export const NiCommands = ['ni', 'nr', 'nix', 'nu', 'num', 'nci', 'na'] as const
+export const NiCommands = ['ni', 'nr', 'nix', 'nu', 'nun', 'nci', 'na'] as const
 export type NiCommands = typeof NiCommands[number]
 
 export type Runner = (agent: Agent, args?: string[], hasLock?: boolean) => string | undefined
@@ -27,7 +27,7 @@ export function resolveNiCommandStatement(command: NiCommands, ...args: Paramete
       return parseNr(...args)
     case 'nu':
       return parseNu(...args)
-    case 'num':
+    case 'nun':
       return parseNun(...args)
     case 'nix':
       return parseNix(...args)
