@@ -1,6 +1,6 @@
 {
   "name": "@nooooooom/unpm",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "packageManager": "pnpm@7.4.0",
   "description": "Unified package manager detect toolkit",
   "author": "Anthony Fu <anthonyfu117@hotmail.com>, nooooooom <https://github.com/nooooooom>",
